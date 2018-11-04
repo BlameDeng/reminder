@@ -4,6 +4,7 @@
     </div>
 </template>
 <script>
+    import { mapMutations, mapActions } from 'vuex'
     export default {
         name: 'App',
         data() {
@@ -13,11 +14,23 @@
         },
         computed: {},
         watch: {},
-        created() {},
+        created() {
+            this.check()
+                .then(res => {
+                    this.setUser(res.data)
+                    this.setLogin(res.isLogin)
+                    this.$router.push('/user')
+                })
+                .catch(error => {
+                    console.log(error)
+                    // this.$router.push('/login')
+                })
+        },
         mounted() {},
         beforedestroy() {},
         methods: {
-
+            ...mapMutations(['setUser', 'setLogin']),
+            ...mapActions(['check'])
         }
     }
 </script>

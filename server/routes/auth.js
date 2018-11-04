@@ -2,6 +2,7 @@
 const Router = require('koa-router')
 const router = new Router()
 const crypto = require('crypto')
+const jwt = require('jsonwebtoken')
 const User = require('../database/user.js')
 const key = require('./key.js')
 
@@ -44,7 +45,8 @@ const login = async (ctx, next) => {
     if (result) {
         let { id, username, nickyname, password, createdAt, updatedAt } = result.dataValues
         if (encrypt(data.password) === password) {
-            ctx.response.body = { status: 'success', msg: '登录成功', data: { id, username, nickyname, createdAt, updatedAt } }
+            let token = jwt.sign({ username, id }, key.jwt_key, { expiresIn: '1h' })
+            ctx.response.body = { status: 'success', msg: '登录成功', isLogin: true, data: { id, username, nickyname, createdAt, updatedAt, token } }
         } else {
             ctx.response.body = { status: 'fail', msg: '密码不正确' }
         }
@@ -52,7 +54,8 @@ const login = async (ctx, next) => {
         let password = encrypt(data.password)
         let user = await User.create({ username: data.username, password })
         let { id, username, nickyname, createdAt, updatedAt } = user.dataValues
-        ctx.response.body = { status: 'success', msg: '注册成功', data: { id, username, nickyname, createdAt, updatedAt } }
+        let token = jwt.sign({ username, id }, key.jwt_key, { expiresIn: '1h' })
+        ctx.response.body = { status: 'success', msg: '注册成功', isLogin: true, data: { id, username, nickyname, createdAt, updatedAt, token } }
     }
     // if (user) {
     //   const hmac = crypto.createHmac('sha256', key.hmac_key)
@@ -75,33 +78,34 @@ const login = async (ctx, next) => {
     // }
 }
 
-// const check = async (ctx, next) => {
-//   ctx.response.status = 200
-//   if (ctx.state && ctx.state.user) {
-//     await User.findById(ctx.state.user.id).then(user => {
-//       let { username, id, createdAt, updatedAt } = user.dataValues
-//       ctx.response.body = {
-//         status: 'success',
-//         isLogin: true,
-//         data: { username, id, createdAt, updatedAt }
-//       }
-//     })
-//   } else {
-//     ctx.response.body = {
-//       status: 'success',
-//       isLogin: false
-//     }
-//   }
-// }
+const check = async (ctx, next) => {
+    ctx.response.status = 200
+    if (ctx.state && ctx.state.user) {
+        await User.findById(ctx.state.user.id).then(user => {
+            let { id, username, nickyname, createdAt, updatedAt } = user.dataValues
+            ctx.response.body = {
+                status: 'success',
+                isLogin: true,
+                data: { id, username, nickyname, createdAt, updatedAt }
+            }
+        })
+    } else {
+        ctx.response.body = {
+            status: 'fail',
+            msg: '用户未登录',
+            isLogin: false
+        }
+    }
+}
 
-// const logout = async (ctx, next) => {
-//   ctx.response.status = 200
-//   if (ctx.state && ctx.state.user) {
-//     ctx.response.body = { status: 'success', msg: '注销成功' }
-//   } else {
-//     ctx.response.body = { status: 'fail', msg: '用户尚未登录' }
-//   }
-// }
+const logout = async (ctx, next) => {
+    ctx.response.status = 200
+    if (ctx.state && ctx.state.user) {
+        ctx.response.body = { status: 'success', msg: '注销成功', isLogin: false }
+    } else {
+        ctx.response.body = { status: 'fail', msg: '用户尚未登录' }
+    }
+}
 
 // const patch = async (ctx, next) => {
 //   ctx.response.status = 200
@@ -132,8 +136,8 @@ const login = async (ctx, next) => {
 // }
 
 router.post('/login', login)
-// router.get('/check', check)
-// router.get('/logout', logout)
+router.get('/check', check)
+router.get('/logout', logout)
 // router.patch('/patch', patch)
 
 module.exports = router

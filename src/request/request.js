@@ -11,13 +11,19 @@ export default function request({ url, method = 'GET', data }) {
         return axios(options)
             .then(res => {
                 if (res.status === 200) {
-                    res.data.status === 'success' ? resolve(res.data.data) : reject(res.data)
+                    res.data.status === 'success' ? resolve(res.data) : reject(res.data)
                 } else {
                     reject(res.data)
                 }
             })
             .catch(error => [
-                console.log(error.res)
+                reject(error.response)
             ])
     })
 }
+
+axios.interceptors.request.use(config => {
+    const user = localStorage.getItem('user')
+    config.headers.common['Authorization'] = 'Bearer ' + user
+    return config
+})

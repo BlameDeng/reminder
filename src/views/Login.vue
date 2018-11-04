@@ -25,7 +25,7 @@
                 <span class="text">登录</span>
                 <span class="wave" v-show="waveVisible" ref="wave"></span>
             </div>
-            <span class="tips">如果账号不存在，将自动为您注册</span>
+            <span class="tips">如果账号未注册，将自动为您注册</span>
         </div>
     </div>
 </template>
@@ -81,9 +81,11 @@
                 }
                 this.login({ username: this.username, password: this.password })
                     .then(res => {
-                        this.setUser(res)
-                        this.setLogin(true)
-                        this.$router.push('/')
+                        res.data.token ? localStorage.setItem('user', res.data.token) : ''
+                        let { id, username, nickyname, createdAt, updatedAt } = res.data
+                        this.setUser({ id, username, nickyname, createdAt, updatedAt })
+                        this.setLogin(res.isLogin)
+                        this.$router.push('/user')
                     })
                     .catch(error => {
                         this.info = error.msg
@@ -157,6 +159,7 @@
                     font-size: 16px;
                     line-height: 24px;
                     pointer-events: none;
+                    user-select: none;
                     &.on-focus {
                         font-size: 12px;
                         line-height: 20px;
@@ -195,6 +198,7 @@
                 border-radius: 4px;
                 cursor: pointer;
                 overflow: hidden;
+                transition: all .2s linear;
                 &:hover {
                     background: rgba(0, 0, 0, .08);
                 }
@@ -215,7 +219,6 @@
                     line-height: 24px;
                     user-select: none;
                     background: transparent;
-                    transition: all .2s linear;
                 }
             }
             >.tips {
