@@ -1,5 +1,5 @@
 const key = {
-    jwt_key: "jwt",
-    hmac_key: "hmac"
+    jwt_key: "reminder",
+    hmac_key: "reminder"
 }
 module.exports = key

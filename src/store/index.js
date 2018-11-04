@@ -1,6 +1,12 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 Vue.use(Vuex)
+import request from '@/request/request.js'
+
+const URL = {
+    login: '/auth/login',
+    logout: '/auth/logout'
+}
 
 export default new Vuex.Store({
     state: {
@@ -16,5 +22,11 @@ export default new Vuex.Store({
             state.isLogin = payload
         }
     },
-    actions: {}
+    actions: {
+        async login({ commit }, data) {
+            let res = await request({ url: URL.login, method: 'POST', data })
+            console.log(res)
+            return res
+        }
+    }
 })

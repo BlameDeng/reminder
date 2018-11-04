@@ -9,7 +9,7 @@
         <div class="dialog">
             <div class="title">
                 <span class="welcome" v-if="!info">Welcome</span>
-                <span class="info" v-else>账号或密码不能为空哦~~</span>
+                <span class="info" v-else>{{info}}</span>
             </div>
             <div class="username">
                 <span class="label" :class="{[`on-focus`]:nameOnFocus||username}">Username</span>
@@ -18,7 +18,7 @@
             </div>
             <div class="password">
                 <span class="label" :class="{[`on-focus`]:pswOnFocus||password}">Password</span>
-                <input type="text" v-model.trim="password" @focus="pswOnFocus=true" @blur="pswOnFocus=false">
+                <input type="text" v-model.trim="password" @focus="pswOnFocus=true" @blur="pswOnFocus=false" @keyup.enter="onClick">
                 <div class="line" :class="{active:pswOnFocus||password}"></div>
             </div>
             <div class="button" role="button" @click="onClick">
@@ -31,6 +31,7 @@
 </template>
 <script>
     import daily from '@/assets/daily.js'
+    import { mapMutations, mapActions } from 'vuex'
     export default {
         name: 'Login',
         mixins: [],
@@ -40,12 +41,12 @@
             return {
                 username: '',
                 password: '',
-                info: false,
+                info: '',
                 nameOnFocus: false,
                 pswOnFocus: false,
                 waveVisible: false,
                 timerId: null,
-                sentence: null
+                sentence: null,
             }
         },
         computed: {},
@@ -59,6 +60,8 @@
         },
         beforedestroy() {},
         methods: {
+            ...mapMutations(['setUser', 'setLogin']),
+            ...mapActions(['login']),
             onClick(e) {
                 if (this.timerId) {
                     window.clearTimeout(this.timerId)
@@ -73,9 +76,18 @@
                 wave.style.top = y + 'px'
                 wave.style.left = x + 'px'
                 if (!this.username || !this.password) {
-                    this.info = true
+                    this.info = '账号或密码不能为空哦~~'
                     return
                 }
+                this.login({ username: this.username, password: this.password })
+                    .then(res => {
+                        this.setUser(res)
+                        this.setLogin(true)
+                        this.$router.push('/')
+                    })
+                    .catch(error => {
+                        this.info = error.msg
+                    })
             }
         }
     }
@@ -206,7 +218,7 @@
                     transition: all .2s linear;
                 }
             }
-            >.tips{
+            >.tips {
                 font-size: 12px;
                 color: $sub;
                 position: absolute;

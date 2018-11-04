@@ -10,7 +10,7 @@
             </div>
             <div class="userinfo">
                 <x-icon name="login" style="width:20px;height:20px;"></x-icon>
-                <span class="username">username</span>
+                <span class="username" v-if="user&&(user.username||user.nickyname)">{{user.nickyname||user.username}}</span>
             </div>
         </header>
         <main class="main">
@@ -39,6 +39,7 @@
 </template>
 <script>
     import xIcon from '@/components/icon/icon.vue'
+    import { mapState } from 'vuex'
     export default {
         name: 'Index',
         mixins: [],
@@ -49,7 +50,11 @@
                 siderVisible: false
             }
         },
-        computed: {},
+        computed: {
+            ...mapState({
+                user: state => state.user
+            })
+        },
         watch: {},
         created() {},
         mounted() {},
