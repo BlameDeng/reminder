@@ -81,9 +81,8 @@
                 }
                 this.login({ username: this.username, password: this.password })
                     .then(res => {
-                        res.data.token ? localStorage.setItem('user', res.data.token) : ''
-                        let { id, username, nickyname, createdAt, updatedAt } = res.data
-                        this.setUser({ id, username, nickyname, createdAt, updatedAt })
+                        res.token ? localStorage.setItem('user', res.token) : ''
+                        this.setUser(res.data)
                         this.setLogin(res.isLogin)
                         this.$router.push('/user')
                     })
@@ -95,8 +94,8 @@
     }
 </script>
 <style scoped lang="scss">
-    @import '@/assets/global.scss';
     @import '@/assets/color.scss';
+    @import '@/assets/common.scss';
     .login {
         width: 100%;
         height: 100%;
@@ -114,7 +113,7 @@
             height: 300px;
             background: rgba(255, 255, 255, .85);
             position: fixed;
-            top: 15%;
+            top: 30%;
             left: 50%;
             transform: translateX(-50%);
             border-radius: 4px;
@@ -123,7 +122,6 @@
             flex-direction: column;
             justify-content: space-evenly;
             align-items: center;
-            position: relative;
             >.title {
                 user-select: none;
                 text-align: center;
@@ -131,55 +129,6 @@
                 >.welcome {
                     font-size: 16px;
                     font-weight: 600;
-                }
-            }
-            @mixin input {
-                margin: 0 30px;
-                position: relative;
-                input {
-                    background: transparent;
-                    border: none;
-                    border-bottom: $borderbase;
-                    width: 240px;
-                    font-size: 16px;
-                    line-height: 24px;
-                    padding: 2px 0;
-                    color: $main;
-                    &:focus {
-                        outline: none;
-                    }
-                }
-                >.label {
-                    position: absolute;
-                    color: $sub;
-                    left: 0;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    transition: all .3s linear;
-                    font-size: 16px;
-                    line-height: 24px;
-                    pointer-events: none;
-                    user-select: none;
-                    &.on-focus {
-                        font-size: 12px;
-                        line-height: 20px;
-                        color: $p;
-                        transform: translateY(-170%);
-                    }
-                }
-                >.line {
-                    position: absolute;
-                    left: 50%;
-                    bottom: 0;
-                    height: 3px;
-                    width: 0;
-                    background: $p;
-                    transition: all .2s linear;
-                    border-radius: 1px;
-                    &.active {
-                        width: 100%;
-                        transform: translateX(-50%);
-                    }
                 }
             }
             >.username {
