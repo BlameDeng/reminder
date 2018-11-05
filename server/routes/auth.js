@@ -64,30 +64,27 @@ const logout = async (ctx, next) => {
 
 const patch = async (ctx, next) => {
     ctx.response.status = 200
-    let { id } = ctx.state.user
-    let { username, password } = ctx.request.body
-    // let user = await User.findOne({ where: { id, username } })
-    // const hmac = crypto.createHmac('sha256', key.hmac_key)
-    // hmac.update(password)
-    // password = hmac.digest('hex')
-    // if (user) {
-    //     let array = await User.update({ password }, { where: { username, id } })
-    //     if (array[0] === 0) {
-    //         ctx.response.body = { status: 'fail', msg: '修改密码失败' }
-    //     } else {
-    //         let user = await User.findById(id)
-    //         let { createdAt, updatedAt } = user
-    //         let token = jwt.sign({ username, id }, key.jwt_key, { expiresIn: '1h' })
-    //         ctx.response.body = {
-    //             status: 'success',
-    //             token,
-    //             msg: '密码修改成功！',
-    //             data: { username, id, createdAt, updatedAt }
-    //         }
-    //     }
-    // } else {
-    //     ctx.response.body = { status: 'fail', msg: '用户不存在' }
-    // }
+    let data = ctx.request.body
+    let user = await User.findById(data.id)
+    if (!user) {
+        ctx.response.body = { status: 'fail', msg: '用户不存在' }
+        return
+    }
+    let result = []
+    if (data.password) {
+        let password = encrypt(data.password)
+        //返回值是个数字数组
+        result = await User.update({ password }, { where: { id: data.id } })
+    } else if (data.id && data.nickyname) {
+        result = await User.update({ nickyname: data.nickyname }, { where: { id: data.id } })
+    }
+    if (result[0]) {
+        let user = await User.findById(data.id)
+        let { id, username, nickyname, createdAt, updatedAt } = user.dataValues
+        ctx.response.body = { status: 'success', msg: '修改成功', data: { id, username, nickyname, createdAt, updatedAt } }
+    } else {
+        ctx.response.body = { status: 'fail', msg: '系统异常，修改失败' }
+    }
 }
 
 router.post('/login', login)

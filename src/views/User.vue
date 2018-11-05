@@ -25,11 +25,11 @@
                 <div class="dialog">
                     <x-icon name="close" class="icon" @click="onClickClose"></x-icon>
                     <div class="title">
-                        <span class="welcome" v-if="!info">{{changeTips}}</span>
+                        <span class="welcome" v-if="!info">{{changeType==='password'?'请输入新密码':'请输入新昵称'}}</span>
                         <span class="info" v-else>{{info}}</span>
                     </div>
                     <div class="input">
-                        <span class="label" :class="{[`on-focus`]:inputOnFocus||input}">{{inputPlaceholder}}</span>
+                        <span class="label" :class="{[`on-focus`]:inputOnFocus||input}">{{changeType==='password'?'Password':'Nickyname'}}</span>
                         <input type="text" v-model.trim="input" @focus="inputOnFocus=true" @blur="inputOnFocus=false" @keyup.enter="onClick">
                         <div class="line" :class="{active:inputOnFocus||input}"></div>
                     </div>
@@ -81,7 +81,8 @@
                 timerId: null,
                 info: '',
                 dialogVisible: false,
-                changeType:''
+                changeType: '',
+                patching: false
             }
         },
         computed: {
@@ -101,7 +102,7 @@
         },
         methods: {
             ...mapMutations(['setUser', 'setLogin']),
-            ...mapActions(['logout']),
+            ...mapActions(['logout', 'patch']),
             onClickMenu() {
                 this.siderVisible = !this.siderVisible
             },
@@ -124,11 +125,12 @@
                         .catch(error => {
                             console.log(error)
                         })
-                } else if (type === 'password') {
-                    this.changeType=type
+                } else {
+                    this.changeType = type
+                    this.input = ''
                     this.info = ''
                     this.dialogVisible = true
-                } 
+                }
             },
             onClickClose() {
                 this.dialogVisible = false
@@ -148,9 +150,38 @@
             onClick(e) {
                 let { offsetX: x, offsetY: y } = e
                 this.waveAnimate(x, y)
-                if (!this.input) {
-                    this.info = '密码不能为空哦~~'
+                if (this.patching) {
                     return
+                }
+                if (this.changeType === 'password') {
+                    if (!this.input) {
+                        this.info = '密码不能为空哦~~'
+                        return
+                    } else {
+                        this.patching = true
+                        this.patch({ id: this.user.id, username: this.user.username, password: this.input })
+                            .then(res => {
+                                this.setUser(res.data)
+                                this.patching = false
+                                this.dialogVisible = false
+                            })
+                            .catch(error => {
+                                this.patching = false
+                                this.dialogVisible = false
+                            })
+                    }
+                } else if (this.changeType === 'nickyname') {
+                    this.patching = true
+                    this.patch({ id: this.user.id, username: this.user.username, nickyname: this.input })
+                        .then(res => {
+                            this.setUser(res.data)
+                            this.patching = false
+                            this.dialogVisible = false
+                        })
+                        .catch(error => {
+                            this.patching = false
+                            this.dialogVisible = false
+                        })
                 }
             }
         }

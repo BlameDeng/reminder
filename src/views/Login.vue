@@ -62,7 +62,7 @@
         methods: {
             ...mapMutations(['setUser', 'setLogin']),
             ...mapActions(['login']),
-            onClick(e) {
+            waveAnimate(x, y) {
                 if (this.timerId) {
                     window.clearTimeout(this.timerId)
                     this.waveVisible = false
@@ -70,11 +70,13 @@
                 this.waveVisible = true
                 this.timerId = setTimeout(() => {
                     this.waveVisible = false
-                }, 300);
+                }, 300)
+                this.$refs.wave.style.top = y + 'px'
+                this.$refs.wave.style.left = x + 'px'
+            },
+            onClick(e) {
                 let { offsetX: x, offsetY: y } = e
-                let wave = this.$refs.wave
-                wave.style.top = y + 'px'
-                wave.style.left = x + 'px'
+                this.waveAnimate(x, y)
                 if (!this.username || !this.password) {
                     this.info = '账号或密码不能为空哦~~'
                     return

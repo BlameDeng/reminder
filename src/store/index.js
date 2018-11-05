@@ -6,7 +6,8 @@ import request from '@/request/request.js'
 const URL = {
     check: '/auth/check',
     login: '/auth/login',
-    logout: '/auth/logout'
+    logout: '/auth/logout',
+    patch: '/auth/patch'
 }
 
 export default new Vuex.Store({
@@ -36,6 +37,12 @@ export default new Vuex.Store({
         },
         async logout({ commit }) {
             let res = await request({ url: URL.logout, method: 'GET' })
+            console.log(res)
+            return res
+        },
+        async patch({ commit }, data) {
+            let res = await request({ url: URL.patch, method: 'PATCH', data })
+            console.log(res)
             return res
         }
     }
