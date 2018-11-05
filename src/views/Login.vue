@@ -12,18 +12,15 @@
                 <span class="info" v-else>{{info}}</span>
             </div>
             <div class="username">
-                <span class="label" :class="{[`on-focus`]:nameOnFocus||username}">Username</span>
-                <input type="text" v-model.trim="username" @focus="nameOnFocus=true" @blur="nameOnFocus=false">
-                <div class="line" :class="{active:nameOnFocus||username}"></div>
+                <x-input v-model.trim="username" placeholder="Username"></x-input>
             </div>
             <div class="password">
-                <span class="label" :class="{[`on-focus`]:pswOnFocus||password}">Password</span>
-                <input type="text" v-model.trim="password" @focus="pswOnFocus=true" @blur="pswOnFocus=false" @keyup.enter="onClick">
-                <div class="line" :class="{active:pswOnFocus||password}"></div>
+                <x-input v-model.trim="password" placeholder="Password"></x-input>
             </div>
-            <div class="button" role="button" @click="onClick">
-                <span class="text">登录</span>
-                <span class="wave" v-show="waveVisible" ref="wave"></span>
+            <div class="button" role="button">
+                <x-wave @click="onClick">
+                    <span class="text">登录</span>
+                </x-wave>
             </div>
             <span class="tips">如果账号未注册，将自动为您注册</span>
         </div>
@@ -31,21 +28,17 @@
 </template>
 <script>
     import daily from '@/assets/daily.js'
+    import xInput from '@/components/input.vue'
+    import xWave from '@/components/wave.vue'
     import { mapMutations, mapActions } from 'vuex'
     export default {
         name: 'Login',
-        mixins: [],
-        components: {},
-        props: {},
+        components: { xInput, xWave },
         data() {
             return {
                 username: '',
                 password: '',
                 info: '',
-                nameOnFocus: false,
-                pswOnFocus: false,
-                waveVisible: false,
-                timerId: null,
                 sentence: null,
             }
         },
@@ -62,21 +55,7 @@
         methods: {
             ...mapMutations(['setUser', 'setLogin']),
             ...mapActions(['login']),
-            waveAnimate(x, y) {
-                if (this.timerId) {
-                    window.clearTimeout(this.timerId)
-                    this.waveVisible = false
-                }
-                this.waveVisible = true
-                this.timerId = setTimeout(() => {
-                    this.waveVisible = false
-                }, 300)
-                this.$refs.wave.style.top = y + 'px'
-                this.$refs.wave.style.left = x + 'px'
-            },
-            onClick(e) {
-                let { offsetX: x, offsetY: y } = e
-                this.waveAnimate(x, y)
+            onClick() {
                 if (!this.username || !this.password) {
                     this.info = '账号或密码不能为空哦~~'
                     return
@@ -97,7 +76,6 @@
 </script>
 <style scoped lang="scss">
     @import '@/assets/color.scss';
-    @import '@/assets/common.scss';
     .login {
         width: 100%;
         height: 100%;
@@ -133,43 +111,25 @@
                     font-weight: 600;
                 }
             }
-            >.username {
-                @include input;
-            }
-            >.password {
-                @include input;
+            >.username,>.password{
+                width: 240px;
             }
             >.button {
                 width: 100px;
                 height: 35px;
-                position: relative;
-                display: flex;
-                justify-content: center;
-                align-items: center;
                 border-radius: 4px;
                 cursor: pointer;
-                overflow: hidden;
                 transition: all .2s linear;
+                background: transparent;
                 &:hover {
-                    background: rgba(0, 0, 0, .08);
-                }
-                >.wave {
-                    pointer-events: none;
-                    position: absolute;
-                    border-radius: inherit;
-                    width: 5px;
-                    height: 5px;
-                    transform: translateX(-50%) translateY(-50%);
                     background: rgba(0, 0, 0, .04);
-                    animation: wave-active .3s linear;
                 }
-                >.text {
+                .text {
                     pointer-events: none;
                     color: $p;
                     font-size: 16px;
                     line-height: 24px;
                     user-select: none;
-                    background: transparent;
                 }
             }
             >.tips {
@@ -180,14 +140,6 @@
                 cursor: default;
                 user-select: none;
             }
-        }
-    }
-    @keyframes wave-active {
-        0% {
-            transform: scale(1);
-        }
-        100% {
-            transform: scale(50);
         }
     }
 </style>

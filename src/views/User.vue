@@ -23,19 +23,18 @@
         <transition name="dialog">
             <div class="mask" v-show="dialogVisible">
                 <div class="dialog">
-                    <x-icon name="close" class="icon" @click="onClickClose"></x-icon>
+                    <x-icon name="close" class="icon" @click="closeDialog"></x-icon>
                     <div class="title">
                         <span class="welcome" v-if="!info">{{changeType==='password'?'请输入新密码':'请输入新昵称'}}</span>
                         <span class="info" v-else>{{info}}</span>
                     </div>
                     <div class="input">
-                        <span class="label" :class="{[`on-focus`]:inputOnFocus||input}">{{changeType==='password'?'Password':'Nickyname'}}</span>
-                        <input type="text" v-model.trim="input" @focus="inputOnFocus=true" @blur="inputOnFocus=false" @keyup.enter="onClick">
-                        <div class="line" :class="{active:inputOnFocus||input}"></div>
+                        <x-input v-model.trim="input" :placeholder="placeholder"></x-input>
                     </div>
-                    <div class="button" role="button" @click="onClick">
-                        <span class="text">确定</span>
-                        <span class="wave" v-show="waveVisible" ref="wave"></span>
+                    <div class="button" role="button">
+                        <x-wave @click="onClick">
+                            <span class="text">确定</span>
+                        </x-wave>
                     </div>
                 </div>
             </div>
@@ -44,13 +43,17 @@
             <transition name="slide">
                 <aside class="sider" v-show="siderVisible">
                     <ul>
-                        <li>
+                        <li style="color:#36b1bf;">
                             <x-icon name="user" class="icon"></x-icon>
-                            <span class="info">个人信息</span>
+                            <span class="info">账号信息</span>
                         </li>
-                        <li>
+                        <li style="color:#52c41a;">
+                            <x-icon name="introduction" class="icon"></x-icon>
+                            <span class="info">项目介绍</span>
+                        </li>
+                        <li style="color:#0366d6;">
                             <x-icon name="github" class="icon"></x-icon>
-                            <span class="info">源码链接</span>
+                            <span class="info">GitHub</span>
                         </li>
                     </ul>
                 </aside>
@@ -60,16 +63,28 @@
         <footer class="footer">
             <ul class="footer-nav">
                 <li>
-                    <x-icon name="everything" class="icon"></x-icon>
-                    <span class="text">Everything</span>
+                    <x-wave>
+                        <div class="wrapper">
+                            <x-icon name="everything" class="icon"></x-icon>
+                            <span class="text">Everything</span>
+                        </div>
+                    </x-wave>
                 </li>
                 <li>
-                    <x-icon name="processing" class="icon"></x-icon>
-                    <span class="text">Processing</span>
+                    <x-wave>
+                        <div class="wrapper">
+                            <x-icon name="processing" class="icon"></x-icon>
+                            <span class="text">Processing</span>
+                        </div>
+                    </x-wave>
                 </li>
                 <li>
-                    <x-icon name="completed" class="icon"></x-icon>
-                    <span class="text">Completed</span>
+                    <x-wave>
+                        <div class="wrapper">
+                            <x-icon name="completed" class="icon"></x-icon>
+                            <span class="text">Completed</span>
+                        </div>
+                    </x-wave>
                 </li>
             </ul>
         </footer>
@@ -77,21 +92,18 @@
 </template>
 <script>
     import xIcon from '@/components/icon/icon.vue'
+    import xInput from '@/components/input.vue'
+    import xWave from '@/components/wave.vue'
     import xTodos from '@/components/todos.vue'
     import { mapState, mapMutations, mapActions } from 'vuex'
     export default {
         name: 'User',
-        mixins: [],
-        components: { xIcon, xTodos },
-        props: {},
+        components: { xIcon, xInput, xWave, xTodos },
         data() {
             return {
                 siderVisible: false,
                 actionVisible: false,
                 input: '',
-                inputOnFocus: false,
-                waveVisible: false,
-                timerId: null,
                 info: '',
                 dialogVisible: false,
                 changeType: '',
@@ -101,7 +113,14 @@
         computed: {
             ...mapState({
                 user: state => state.user
-            })
+            }),
+            placeholder() {
+                if (this.changeType === 'password') {
+                    return 'Password'
+                } else if (this.changeType === 'nickyname') {
+                    return 'Nickyname'
+                }
+            }
         },
         watch: {
             actionVisible(val) {
@@ -143,32 +162,17 @@
                         })
                 } else {
                     this.changeType = type
-                    this.input = ''
-                    this.info = ''
                     this.dialogVisible = true
                 }
             },
-            onClickClose() {
+            closeDialog() {
+                this.input = ''
+                this.info = ''
                 this.dialogVisible = false
+                this.patching = false
             },
-            waveAnimate(x, y) {
-                if (this.timerId) {
-                    window.clearTimeout(this.timerId)
-                    this.waveVisible = false
-                }
-                this.waveVisible = true
-                this.timerId = setTimeout(() => {
-                    this.waveVisible = false
-                }, 300)
-                this.$refs.wave.style.top = y + 'px'
-                this.$refs.wave.style.left = x + 'px'
-            },
-            onClick(e) {
-                let { offsetX: x, offsetY: y } = e
-                this.waveAnimate(x, y)
-                if (this.patching) {
-                    return
-                }
+            onClick() {
+                if (this.patching) { return }
                 if (this.changeType === 'password') {
                     if (!this.input) {
                         this.info = '密码不能为空哦~~'
@@ -182,12 +186,10 @@
                             })
                             .then(res => {
                                 this.setUser(res.data)
-                                this.patching = false
-                                this.dialogVisible = false
+                                this.closeDialog()
                             })
                             .catch(error => {
-                                this.patching = false
-                                this.dialogVisible = false
+                                this.closeDialog()
                             })
                     }
                 } else if (this.changeType === 'nickyname') {
@@ -199,12 +201,10 @@
                         })
                         .then(res => {
                             this.setUser(res.data)
-                            this.patching = false
-                            this.dialogVisible = false
+                            this.closeDialog()
                         })
                         .catch(error => {
-                            this.patching = false
-                            this.dialogVisible = false
+                            this.closeDialog()
                         })
                 }
             }
@@ -213,7 +213,6 @@
 </script>
 <style scoped lang="scss">
     @import '@/assets/color.scss';
-    @import '@/assets/common.scss';
     .user {
         width: 100%;
         height: 100%;
@@ -234,7 +233,7 @@
             box-shadow: 0 4px 4px -4px rgba(0, 0, 0, 0.15);
             position: relative;
             >.menu {
-                width: 30px;
+                width: 35px;
                 height: 30px;
                 display: flex;
                 justify-content: center;
@@ -266,7 +265,7 @@
                 height: 100%;
                 width: 100px;
                 position: relative;
-                padding-left: 30px;
+                padding-left: 20px;
                 >.icon {
                     margin-left: -20px;
                 }
@@ -344,39 +343,24 @@
                     }
                 }
                 >.input {
-                    @include input;
+                    width: 240px;
                 }
                 >.button {
                     width: 100px;
                     height: 35px;
-                    position: relative;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
                     border-radius: 4px;
                     cursor: pointer;
-                    overflow: hidden;
+                    background: transparent;
                     transition: all 0.2s linear;
                     &:hover {
-                        background: rgba(0, 0, 0, 0.08);
+                        background: rgba(0, 0, 0, .04);
                     }
-                    >.wave {
-                        pointer-events: none;
-                        position: absolute;
-                        border-radius: inherit;
-                        width: 5px;
-                        height: 5px;
-                        transform: translateX(-50%) translateY(-50%);
-                        background: rgba(0, 0, 0, 0.04);
-                        animation: wave-active 0.3s linear;
-                    }
-                    >.text {
+                    .text {
                         pointer-events: none;
                         color: $p;
                         font-size: 16px;
                         line-height: 24px;
                         user-select: none;
-                        background: transparent;
                     }
                 }
             }
@@ -388,19 +372,23 @@
             justify-content: flex-start;
             align-items: stretch;
             >.sider {
-                width: 150px;
+                width: 200px;
                 height: 100%;
                 flex-shrink: 0;
-                box-shadow: 4px 0 4px -4px rgba(0, 0, 0, 0.15);
+                box-shadow: 4px 0 4px -4px rgba(0, 0, 0, .15);
                 >ul {
                     >li {
-                        padding: 0.5em;
+                        padding: 15px;
                         display: flex;
                         justify-content: flex-start;
                         align-items: center;
                         cursor: pointer;
                         &:hover {
                             background: $bg;
+                        }
+                        >.icon {
+                            width: 18px;
+                            height: 18px;
                         }
                         >.info {
                             display: inline-flex;
@@ -416,7 +404,7 @@
         >.footer {
             width: 100%;
             height: 60px;
-            box-shadow: 0 -4px 4px -4px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 -4px 4px -4px rgba(0, 0, 0, .15);
             >.footer-nav {
                 width: 100%;
                 height: 100%;
@@ -424,18 +412,26 @@
                 justify-content: space-evenly;
                 align-items: center;
                 >li {
-                    border: 1px solid red;
                     height: 100%;
-                    padding: 0 20px;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    align-items: center;
-                    cursor: pointer;
-                    color: $sub;
-                    >.icon {
-                        width: 25px;
-                        height: 25px;
+                    background: transparent;
+                    transition: all .2s linear;
+                    &:hover {
+                        background: rgba(0, 0, 0, .04);
+                    }
+                    .wrapper {
+                        height: 100%;
+                        padding: 0 30px;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                        cursor: pointer;
+                        color: $sub;
+                        user-select: none;
+                        .icon {
+                            width: 25px;
+                            height: 25px;
+                        }
                     }
                 }
             }
@@ -473,13 +469,5 @@
     .dialog-enter,
     .dialog-leave-to {
         opacity: 0;
-    }
-    @keyframes wave-active {
-        0% {
-            transform: scale(1);
-        }
-        100% {
-            transform: scale(50);
-        }
     }
 </style>

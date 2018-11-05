@@ -5,7 +5,7 @@
 <script>
     import { mapMutations, mapActions } from 'vuex'
     export default {
-        name: 'Todos',
+        name: 'xTodos',
         mixins: [],
         components: {},
         props: {},
@@ -25,6 +25,5 @@
 </script>
 <style scoped lang="scss">
     @import '@/assets/color.scss';
-    @import '@/assets/common.scss';
     .todos {}
 </style>

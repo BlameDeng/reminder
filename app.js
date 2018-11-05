@@ -12,25 +12,25 @@ app.use(cors())
 const router = new Router()
 
 app.use((ctx, next) => {
-  return next().catch(err => {
-    if (err.status === 401) {
-      if (ctx.url === '/auth/check') {
-        ctx.response.status = 200
-        ctx.response.body = {
-          status: 'fail',
-          isLogin: false
+    return next().catch(err => {
+        if (err.status === 401) {
+            if (ctx.url === '/auth/check') {
+                ctx.response.status = 200
+                ctx.response.body = {
+                    status: 'fail',
+                    isLogin: false
+                }
+            } else {
+                ctx.response.status = 401
+                ctx.response.body = {
+                    status: 'fail',
+                    msg: '用户未登录'
+                }
+            }
+        } else {
+            throw err
         }
-      } else {
-        ctx.response.status = 401
-        ctx.response.body = {
-          status: 'fail',
-          msg: '用户未登录'
-        }
-      }
-    } else {
-      throw err
-    }
-  })
+    })
 })
 
 router.use('/auth', auth.routes())
@@ -40,5 +40,5 @@ app.use(koaBody({ multipart: true, strict: false }))
 app.use(router.routes())
 const port = 3000
 app.listen(port, () => {
-  console.log(`Koa2开始监听${port}端口`)
+    console.log(`Koa2开始监听${port}端口`)
 })
