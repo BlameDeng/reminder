@@ -49,27 +49,40 @@
                             <span class="info">个人信息</span>
                         </li>
                         <li>
-                            <x-icon name="list" class="icon"></x-icon>
-                            <span class="info">全部事项</span>
-                        </li>
-                        <li>
                             <x-icon name="github" class="icon"></x-icon>
-                            <span class="info">GitHub</span>
+                            <span class="info">源码链接</span>
                         </li>
                     </ul>
                 </aside>
             </transition>
+            <x-todos></x-todos>
         </main>
-        <footer class="footer">footer</footer>
+        <footer class="footer">
+            <ul class="footer-nav">
+                <li>
+                    <x-icon name="everything" class="icon"></x-icon>
+                    <span class="text">Everything</span>
+                </li>
+                <li>
+                    <x-icon name="processing" class="icon"></x-icon>
+                    <span class="text">Processing</span>
+                </li>
+                <li>
+                    <x-icon name="completed" class="icon"></x-icon>
+                    <span class="text">Completed</span>
+                </li>
+            </ul>
+        </footer>
     </div>
 </template>
 <script>
     import xIcon from '@/components/icon/icon.vue'
+    import xTodos from '@/components/todos.vue'
     import { mapState, mapMutations, mapActions } from 'vuex'
     export default {
         name: 'User',
         mixins: [],
-        components: { xIcon },
+        components: { xIcon, xTodos },
         props: {},
         data() {
             return {
@@ -92,7 +105,10 @@
         },
         watch: {
             actionVisible(val) {
-                val ? document.addEventListener('click', this.listenDocument) : document.removeEventListener('click', this.listenDocument)
+                val
+                    ?
+                    document.addEventListener('click', this.listenDocument) :
+                    document.removeEventListener('click', this.listenDocument)
             }
         },
         created() {},
@@ -159,7 +175,11 @@
                         return
                     } else {
                         this.patching = true
-                        this.patch({ id: this.user.id, username: this.user.username, password: this.input })
+                        this.patch({
+                                id: this.user.id,
+                                username: this.user.username,
+                                password: this.input
+                            })
                             .then(res => {
                                 this.setUser(res.data)
                                 this.patching = false
@@ -172,7 +192,11 @@
                     }
                 } else if (this.changeType === 'nickyname') {
                     this.patching = true
-                    this.patch({ id: this.user.id, username: this.user.username, nickyname: this.input })
+                    this.patch({
+                            id: this.user.id,
+                            username: this.user.username,
+                            nickyname: this.input
+                        })
                         .then(res => {
                             this.setUser(res.data)
                             this.patching = false
@@ -218,7 +242,7 @@
                 cursor: pointer;
                 border-radius: 2px;
                 background: transparent;
-                transition: all .2s linear;
+                transition: all 0.2s linear;
                 &:hover {
                     background: rgba(0, 0, 0, 0.15);
                 }
@@ -253,7 +277,6 @@
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
-
                 }
             }
             >.action {
@@ -270,7 +293,7 @@
                     width: 100px;
                     padding: 4px 8px;
                     background: transparent;
-                    transition: all .2s linear;
+                    transition: all 0.2s linear;
                     text-align: center;
                     &:hover {
                         background: $bg;
@@ -286,11 +309,11 @@
             width: 100%;
             height: 100%;
             position: fixed;
-            background: rgba(0, 0, 0, .04);
+            background: rgba(0, 0, 0, 0.04);
             >.dialog {
                 width: 300px;
                 height: 200px;
-                background: rgba(255, 255, 255, .85);
+                background: rgba(255, 255, 255, 0.85);
                 position: fixed;
                 top: 30%;
                 left: 50%;
@@ -333,9 +356,9 @@
                     border-radius: 4px;
                     cursor: pointer;
                     overflow: hidden;
-                    transition: all .2s linear;
+                    transition: all 0.2s linear;
                     &:hover {
-                        background: rgba(0, 0, 0, .08);
+                        background: rgba(0, 0, 0, 0.08);
                     }
                     >.wave {
                         pointer-events: none;
@@ -344,8 +367,8 @@
                         width: 5px;
                         height: 5px;
                         transform: translateX(-50%) translateY(-50%);
-                        background: rgba(0, 0, 0, .04);
-                        animation: wave-active .3s linear;
+                        background: rgba(0, 0, 0, 0.04);
+                        animation: wave-active 0.3s linear;
                     }
                     >.text {
                         pointer-events: none;
@@ -394,11 +417,33 @@
             width: 100%;
             height: 60px;
             box-shadow: 0 -4px 4px -4px rgba(0, 0, 0, 0.15);
+            >.footer-nav {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                justify-content: space-evenly;
+                align-items: center;
+                >li {
+                    border: 1px solid red;
+                    height: 100%;
+                    padding: 0 20px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    cursor: pointer;
+                    color: $sub;
+                    >.icon {
+                        width: 25px;
+                        height: 25px;
+                    }
+                }
+            }
         }
     }
     .slide-enter-active,
     .slide-leave-active {
-        transition: transform .4s ease-in-out;
+        transition: transform 0.4s ease-in-out;
     }
     .slide-enter,
     .slide-leave-to {
@@ -408,20 +453,25 @@
     .slide-leave {
         transform: translateX(0);
     }
-    .action-slide-enter-active, .action-slide-leave-active {
-        transition: all .4s ease-in-out;
+    .action-slide-enter-active,
+    .action-slide-leave-active {
+        transition: all 0.4s ease-in-out;
         overflow: hidden;
     }
-    .action-slide-enter, .action-slide-leave-to {
+    .action-slide-enter,
+    .action-slide-leave-to {
         height: 0;
     }
-    .action-slide-enter-to, .action-slide-leave {
+    .action-slide-enter-to,
+    .action-slide-leave {
         height: 90px;
     }
-    .dialog-enter-active, .dialog-leave-active {
-        transition: opacity .3s linear;
+    .dialog-enter-active,
+    .dialog-leave-active {
+        transition: opacity 0.3s linear;
     }
-    .dialog-enter, .dialog-leave-to {
+    .dialog-enter,
+    .dialog-leave-to {
         opacity: 0;
     }
     @keyframes wave-active {

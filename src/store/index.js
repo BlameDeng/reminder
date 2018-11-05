@@ -1,13 +1,14 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 Vue.use(Vuex)
-import request from '@/request/request.js'
+import request from '@/http/request.js'
 
+const prefix = `http://118.31.8.24:3000/`
 const URL = {
-    check: 'http://118.31.8.24:3000/auth/check',
-    login: 'http://118.31.8.24:3000/auth/login',
-    logout: 'http://118.31.8.24:3000/auth/logout',
-    patch: 'http://118.31.8.24:3000/auth/patch'
+    check: `${prefix}auth/check`,
+    login: `${prefix}auth/login`,
+    logout: `${prefix}auth/logout`,
+    patch: `${prefix}auth/patch`
 }
 
 export default new Vuex.Store({
