@@ -1,8 +1,8 @@
 import request from '@/http/request.js'
 import Leancloud from '@/http/leancloud.js'
 const TodoUser = new Leancloud('TodoUser')
-// const prefix = `http://118.31.8.24:3000/`
-const prefix = `http://localhost:3000/`
+const prefix = `http://blame.com.cn:3000/`
+// const prefix = `http://localhost:3000/`
 const URL = {
     check: `${prefix}auth/check`,
     login: `${prefix}auth/login`,

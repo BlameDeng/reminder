@@ -374,10 +374,16 @@
             display: flex;
             justify-content: flex-start;
             align-items: stretch;
+            position: relative;
             >.sider {
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 1;
                 width: 200px;
                 height: 100%;
                 flex-shrink: 0;
+                background: #fff;
                 box-shadow: 4px 0 4px -4px rgba(0, 0, 0, .15);
                 >ul {
                     >li {
@@ -410,6 +416,8 @@
             width: 100%;
             height: 60px;
             box-shadow: 0 -4px 4px -4px rgba(0, 0, 0, .15);
+            position: relative;
+            z-index: 1;
             >.footer-nav {
                 width: 100%;
                 height: 100%;

@@ -1,11 +1,13 @@
 <template>
     <div class="todos">
         <div class="add" @click="onClickAdd">
-            <x-icon name="add" class="icon"></x-icon>
+            <x-icon name="add" class="icon" :class="{rotate:dialogVisible}"></x-icon>
         </div>
-        <div class="dialog-wrapper">
-            <x-dialog></x-dialog>
-        </div>
+        <transition name="dialog-show">
+            <div class="dialog-wrapper" v-show="dialogVisible">
+                <x-dialog></x-dialog>
+            </div>
+        </transition>
     </div>
 </template>
 <script>
@@ -18,7 +20,7 @@
         components: { xIcon, xDialog },
         props: {},
         data() {
-            return { value: '' }
+            return { value: '', dialogVisible: false }
         },
         computed: {},
         watch: {},
@@ -29,7 +31,7 @@
             ...mapMutations(['setUser', 'setLogin']),
             ...mapActions(['login']),
             onClickAdd() {
-                console.log(1)
+                this.dialogVisible = !this.dialogVisible
             }
         }
     }
@@ -60,15 +62,20 @@
                 color: rgba(255, 255, 255, .85);
                 width: 30px;
                 height: 30px;
+                transition:  transform .2s linear;
+                &.rotate{
+                    transform: rotateZ(-45deg);
+                }
             }
         }
         >.dialog-wrapper {
-            border: $borderbase;
             position: absolute;
             right: 0;
             bottom: 0;
             width: 100%;
             height: 100%;
+            box-shadow: 2px 2px 8px rgba(0,0,0,.15);
+            background: $p5;
         }
         @media (min-width: 768px) {
             >.dialog-wrapper {
@@ -85,5 +92,16 @@
                 height: 500px;
             }
         }
+    }
+    .dialog-show-enter-active, .dialog-show-leave-active {
+        transition: all .2s ease-in-out;
+    }
+    .dialog-show-enter, .dialog-show-leave-to {
+        opacity: 0;
+        transform: translateY(-80px);
+    }
+    .dialog-show-enter-to, .dialog-show-leave {
+        opacity: 1;
+        transform: translateY(0);
     }
 </style>
