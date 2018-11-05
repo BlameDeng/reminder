@@ -7,6 +7,7 @@ class Leancloud {
     }
 
     create(data, dependentClassName, dependentId) {
+        if (!data) { return Promise.reject('必须提供data') }
         if (typeof data !== 'object') {
             return Promise.reject('参数必须为非空对象')
         }
@@ -28,11 +29,11 @@ class Leancloud {
     }
 
     update(data, id) {
+        if (!data || !id) { return Promise.reject('必须提供data和id') }
         if (typeof data !== 'object') {
             return Promise.reject('参数必须为非空对象')
         }
         let entries = Object.entries(data)
-        if (!id) { return Promise.reject('必须提供id') }
         let instance = AV.Object.createWithoutData(this.className, id)
         entries.forEach(array => {
             instance.set(array[0], array[1])
