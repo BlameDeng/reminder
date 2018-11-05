@@ -5,11 +5,11 @@
                 <x-icon name="menu" style="width:20px;height:20px;"></x-icon>
             </div>
             <div class="logo">
-                <x-icon name="logo" style="width:20px;height:20px;"></x-icon>
-                <span class="text">Reminder</span>
+                <x-icon name="logo" style="width:24px;height:24px;"></x-icon>
+                <span class="text">Todos</span>
             </div>
             <div class="userinfo" @click="onClickUserInfo">
-                <x-icon name="login" style="width:20px;height:20px;" class="icon"></x-icon>
+                <x-icon name="login" style="width:18px;height:18px;" class="icon"></x-icon>
                 <div class="username" v-if="user&&(user.username||user.nickyname)">{{user.nickyname||user.username}}</div>
             </div>
             <transition name="action-slide">
@@ -51,7 +51,7 @@
                             <x-icon name="introduction" class="icon"></x-icon>
                             <span class="info">项目介绍</span>
                         </li>
-                        <li style="color:#0366d6;">
+                        <li style="color:#0366d6;" @click="onClickSider('link')">
                             <x-icon name="github" class="icon"></x-icon>
                             <span class="info">GitHub</span>
                         </li>
@@ -112,7 +112,7 @@
         },
         computed: {
             ...mapState({
-                user: state => state.user
+                user: state => state.auth.user
             }),
             placeholder() {
                 if (this.changeType === 'password') {
@@ -137,7 +137,7 @@
         },
         methods: {
             ...mapMutations(['setUser', 'setLogin']),
-            ...mapActions(['logout', 'patch']),
+            ...mapActions(['logout', 'patchUser']),
             onClickMenu() {
                 this.siderVisible = !this.siderVisible
             },
@@ -151,15 +151,12 @@
                 if (type === 'logout') {
                     this.logout()
                         .then(res => {
-                            console.log(res)
                             this.setUser(null)
                             this.setLogin(res.isLogin)
                             localStorage.removeItem('user')
                             this.$router.push('/')
                         })
-                        .catch(error => {
-                            console.log(error)
-                        })
+                        .catch(error => {})
                 } else {
                     this.changeType = type
                     this.dialogVisible = true
@@ -179,7 +176,7 @@
                         return
                     } else {
                         this.patching = true
-                        this.patch({
+                        this.patchUser({
                                 id: this.user.id,
                                 username: this.user.username,
                                 password: this.input
@@ -194,7 +191,7 @@
                     }
                 } else if (this.changeType === 'nickyname') {
                     this.patching = true
-                    this.patch({
+                    this.patchUser({
                             id: this.user.id,
                             username: this.user.username,
                             nickyname: this.input
@@ -207,6 +204,9 @@
                             this.closeDialog()
                         })
                 }
+            },
+            onClickSider(type) {
+                window.open('https://github.com/BlameDeng/todos', '_blank')
             }
         }
     }
@@ -228,7 +228,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 0 30px;
-            background: $p;
+            background: linear-gradient(to right, $p, #fff);
             color: #fff;
             box-shadow: 0 4px 4px -4px rgba(0, 0, 0, 0.15);
             position: relative;
@@ -255,6 +255,7 @@
                     font-size: 22px;
                     font-weight: 600;
                     margin-left: 4px;
+                    font-style: italic;
                 }
             }
             >.userinfo {
@@ -266,16 +267,18 @@
                 width: 100px;
                 position: relative;
                 padding-left: 20px;
+                color: $sub;
                 >.icon {
                     margin-left: -20px;
                 }
                 >.username {
-                    font-size: 16px;
+                    font-size: 14px;
                     margin-left: 4px;
                     width: 70px;
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
+                    user-select: none;
                 }
             }
             >.action {
@@ -383,6 +386,8 @@
                         justify-content: flex-start;
                         align-items: center;
                         cursor: pointer;
+                        background: transparent;
+                        transition: all .2s ease-in-out;
                         &:hover {
                             background: $bg;
                         }

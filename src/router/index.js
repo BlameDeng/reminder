@@ -19,7 +19,7 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requiresLogin)) {
-        if (store.state.isLogin) {
+        if (store.state.auth.isLogin) {
             next()
         } else {
             next('/')

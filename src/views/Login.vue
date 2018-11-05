@@ -54,7 +54,7 @@
         beforedestroy() {},
         methods: {
             ...mapMutations(['setUser', 'setLogin']),
-            ...mapActions(['login']),
+            ...mapActions(['login', 'createTodoUser', 'patchUser']),
             onClick() {
                 if (!this.username || !this.password) {
                     this.info = '账号或密码不能为空哦~~'
@@ -63,9 +63,28 @@
                 this.login({ username: this.username, password: this.password })
                     .then(res => {
                         res.token ? localStorage.setItem('user', res.token) : ''
-                        this.setUser(res.data)
-                        this.setLogin(res.isLogin)
-                        this.$router.push('/user')
+                        if (res.data.uid) {
+                            this.setUser(res.data)
+                            this.setLogin(res.isLogin)
+                            this.$router.push('/user')
+                        } else {
+                            let id = res.data.id
+                            this.createTodoUser({ username: res.data.username })
+                                .then(res => {
+                                    console.log(res)
+                                    let { id: uid } = res
+                                    return this.patchUser({ id, uid })
+                                })
+                                .then(res => {
+                                    console.log(res)
+                                    this.setUser(res.data)
+                                    this.setLogin(res.isLogin)
+                                    this.$router.push('/user')
+                                })
+                                .catch(error => {
+                                    console.log(error)
+                                })
+                        }
                     })
                     .catch(error => {
                         this.info = error.msg
@@ -111,7 +130,7 @@
                     font-weight: 600;
                 }
             }
-            >.username,>.password{
+            >.username, >.password {
                 width: 240px;
             }
             >.button {

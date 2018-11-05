@@ -1,5 +1,5 @@
 {
-  "name": "reminder",
+  "name": "todos",
   "version": "1.0.0",
   "description": "A Vue.js project",
   "author": "BlameDeng <476961779@qq.com>",
@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "leancloud-storage": "^3.10.0",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1"

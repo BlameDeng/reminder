@@ -23,7 +23,6 @@
                 })
                 .catch(error => {
                     console.log(error)
-                    // this.$router.push('/login')
                 })
         },
         mounted() {},
