@@ -4,10 +4,10 @@ Vue.use(Vuex)
 import request from '@/request/request.js'
 
 const URL = {
-    check: '/auth/check',
-    login: '/auth/login',
-    logout: '/auth/logout',
-    patch: '/auth/patch'
+    check: 'http://118.31.8.24:3000/auth/check',
+    login: 'http://118.31.8.24:3000/auth/login',
+    logout: 'http://118.31.8.24:3000/auth/logout',
+    patch: 'http://118.31.8.24:3000/auth/patch'
 }
 
 export default new Vuex.Store({

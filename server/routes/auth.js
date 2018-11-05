@@ -22,7 +22,7 @@ const login = async (ctx, next) => {
             let token = jwt.sign({ username, id }, key.jwt_key, { expiresIn: '1h' })
             ctx.response.body = { status: 'success', msg: '登录成功', isLogin: true, token, data: { id, username, nickyname, createdAt, updatedAt } }
         } else {
-            ctx.response.body = { status: 'fail', msg: '密码不正确' }
+            ctx.response.body = { status: 'fail', msg: '密码不正确', isLogin: false }
         }
     } else {
         let password = encrypt(data.password)
@@ -58,7 +58,7 @@ const logout = async (ctx, next) => {
     if (ctx.state && ctx.state.user) {
         ctx.response.body = { status: 'success', msg: '注销成功', isLogin: false }
     } else {
-        ctx.response.body = { status: 'fail', msg: '用户尚未登录' }
+        ctx.response.body = { status: 'fail', msg: '用户尚未登录', isLogin: false }
     }
 }
 
@@ -81,7 +81,7 @@ const patch = async (ctx, next) => {
     if (result[0]) {
         let user = await User.findById(data.id)
         let { id, username, nickyname, createdAt, updatedAt } = user.dataValues
-        ctx.response.body = { status: 'success', msg: '修改成功', data: { id, username, nickyname, createdAt, updatedAt } }
+        ctx.response.body = { status: 'success', msg: '修改成功', isLogin: true, data: { id, username, nickyname, createdAt, updatedAt } }
     } else {
         ctx.response.body = { status: 'fail', msg: '系统异常，修改失败' }
     }
