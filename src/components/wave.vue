@@ -80,7 +80,7 @@
             transform: scale(1);
         }
         100% {
-            transform: scale(50);
+            transform: scale(40);
         }
     }
 </style>

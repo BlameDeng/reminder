@@ -43,11 +43,7 @@
             <transition name="slide">
                 <aside class="sider" v-show="siderVisible">
                     <ul>
-                        <li style="color:#36b1bf;">
-                            <x-icon name="user" class="icon"></x-icon>
-                            <span class="info">账号信息</span>
-                        </li>
-                        <li style="color:#52c41a;">
+                        <li style="color:#52c41a;" @click="onClickSider('introduction')">
                             <x-icon name="introduction" class="icon"></x-icon>
                             <span class="info">项目介绍</span>
                         </li>
@@ -58,11 +54,22 @@
                     </ul>
                 </aside>
             </transition>
-            <x-todos></x-todos>
+            <x-todos :visible-type="visibleType"></x-todos>
         </main>
+        <transition name="fade">
+            <div class="intro-mask" v-show="introductionVisible">
+                <div class="introduction">
+                    <x-icon name="close" class="icon" @click="introductionVisible=false"></x-icon>
+                    <h3 style="text-align:center;">项目介绍</h3>
+                    <p><span>Todos</span> 是一款轻量级的在线待办 <span>SPA</span>。支持登录注册、增删改查、云端同步。</p>
+                    <p><span>前端：Vue + Vuex + Vue Router + axios + CSS3</span></p>
+                    <p><span>部署：Node + Koa2 + Leancloud</span> 用户数据经加密后保存在服务器，支持 <span>token</span> 验证登录，<span>todo</span> 事项保存在 <span>leancloud</span></p>
+                </div>
+            </div>
+        </transition>
         <footer class="footer">
             <ul class="footer-nav">
-                <li>
+                <li @click="onClickFooterNav('all')">
                     <x-wave>
                         <div class="wrapper">
                             <x-icon name="everything" class="icon"></x-icon>
@@ -70,7 +77,7 @@
                         </div>
                     </x-wave>
                 </li>
-                <li>
+                <li @click="onClickFooterNav('processing')">
                     <x-wave>
                         <div class="wrapper">
                             <x-icon name="processing" class="icon"></x-icon>
@@ -78,7 +85,7 @@
                         </div>
                     </x-wave>
                 </li>
-                <li>
+                <li @click="onClickFooterNav('completed')">
                     <x-wave>
                         <div class="wrapper">
                             <x-icon name="completed" class="icon"></x-icon>
@@ -107,7 +114,9 @@
                 info: '',
                 dialogVisible: false,
                 changeType: '',
-                patching: false
+                changing: false,
+                visibleType: 'all',
+                introductionVisible: false
             }
         },
         computed: {
@@ -128,6 +137,12 @@
                     ?
                     document.addEventListener('click', this.listenDocument) :
                     document.removeEventListener('click', this.listenDocument)
+            },
+            siderVisible(val) {
+                val
+                    ?
+                    document.addEventListener('click', this.handleSider) :
+                    document.removeEventListener('click', this.handleSider)
             }
         },
         created() {},
@@ -145,16 +160,18 @@
         },
         beforedestroy() {
             document.removeEventListener('click', this.listenDocument)
+            document.removeEventListener('click', this.handleSider)
         },
         methods: {
             ...mapMutations(['setUser', 'setLogin', 'setAllTodos']),
             ...mapActions(['logout', 'patchUser', 'fetchTodos']),
             onClickMenu() {
-                this.siderVisible = !this.siderVisible
+                this.siderVisible = true
             },
             onClickUserInfo() {
                 this.actionVisible = true
             },
+            handleSider() { this.siderVisible = false },
             listenDocument() {
                 this.actionVisible = false
             },
@@ -177,16 +194,16 @@
                 this.input = ''
                 this.info = ''
                 this.dialogVisible = false
-                this.patching = false
+                this.changing = false
             },
             onClick() {
-                if (this.patching) { return }
+                if (this.changing) { return }
                 if (this.changeType === 'password') {
                     if (!this.input) {
                         this.info = '密码不能为空哦~~'
                         return
                     }
-                    this.patching = true
+                    this.changing = true
                     this.patchUser({
                             id: this.user.id,
                             username: this.user.username,
@@ -205,7 +222,7 @@
                         this.info = '昵称不能为空哦~~'
                         return
                     }
-                    this.patching = true
+                    this.changing = true
                     this.patchUser({
                             id: this.user.id,
                             username: this.user.username,
@@ -221,7 +238,14 @@
                 }
             },
             onClickSider(type) {
-                window.open('https://github.com/BlameDeng/todos', '_blank')
+                if (type === 'link') {
+                    window.open('https://github.com/BlameDeng/todos', '_blank')
+                } else {
+                    this.introductionVisible = true
+                }
+            },
+            onClickFooterNav(type) {
+                this.visibleType = type
             }
         }
     }
@@ -247,6 +271,7 @@
             color: #fff;
             box-shadow: 0 4px 4px -4px rgba(0, 0, 0, 0.15);
             position: relative;
+            z-index: 10;
             >.menu {
                 width: 35px;
                 height: 30px;
@@ -430,6 +455,52 @@
                 }
             }
         }
+        .intro-mask {
+            position: fixed;
+            z-index: 10;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, .3);
+            >.introduction {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translateX(-50%) translateY(-50%);
+                width: 100%;
+                height: 400px;
+                background: rgb(245, 245, 245);
+                box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.15);
+                border-radius: 4px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: stretch;
+                padding: 0 20px;
+                >.icon {
+                    width: 20px;
+                    height: 20px;
+                    cursor: pointer;
+                    position: absolute;
+                    top: 10px;
+                    right: 10px;
+                    color: $sub;
+                    &:hover {
+                        color: $main;
+                    }
+                }
+                span {
+                    font-weight: 600;
+                }
+            }
+            @media(min-width: 768px) {
+                >.introduction {
+                    margin: 0 auto;
+                    width: 500px;
+                }
+            }
+        }
         >.footer {
             width: 100%;
             height: 60px;
@@ -499,6 +570,12 @@
     }
     .dialog-enter,
     .dialog-leave-to {
+        opacity: 0;
+    }
+    .fade-enter-active, .fade-leave-active {
+        transition: opacity .3s ease-in-out;
+    }
+    .fade-enter, .fade-leave-to {
         opacity: 0;
     }
 </style>

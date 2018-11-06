@@ -1,6 +1,6 @@
 <template>
     <div class="x-textarea" role="textarea">
-        <textarea type="text" :value="value" @focus="focus" @blur="blur" @change="change" @input="$emit('input', $event.target.value)" ref="textarea"></textarea>
+        <textarea type="text" :value="value" @focus="focus" @blur="blur" @change="change" @input="$emit('input', $event.target.value)" ref="textarea" :class="{['line-through']:lineThrough}" :readonly="lineThrough"></textarea>
         <div class="line" :class="{active:onFocus}"></div>
     </div>
 </template>
@@ -8,7 +8,8 @@
     export default {
         name: 'xTextarea',
         props: {
-            value: String
+            value: String,
+            lineThrough: Boolean
         },
         data() {
             return {
@@ -23,6 +24,7 @@
         methods: {
             focus(e) {
                 this.$emit('focus', e)
+                if (this.lineThrough) { return }
                 this.onFocus = true
             },
             blur(e) {
@@ -35,7 +37,7 @@
             },
             handleHeight() {
                 let height = this.$refs.textarea.scrollHeight
-                this.$el.style.height = height + 1 + 'px'
+                this.$el.style.height = height + 'px'
                 this.$refs.textarea.height = height + 'px'
             }
         }
@@ -62,6 +64,11 @@
             padding: 0 5px;
             &:focus {
                 outline: none;
+            }
+            &.line-through {
+                text-decoration: line-through;
+                color: $sub;
+                cursor: not-allowed;
             }
         }
         >.line {

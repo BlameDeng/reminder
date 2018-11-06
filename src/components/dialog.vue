@@ -26,7 +26,7 @@
 <script>
     import xIcon from '@/components/icon/icon.vue'
     import xTextarea from '@/components/textarea.vue'
-    import { mapState, mapActions } from 'vuex'
+    import { mapState, mapMutations, mapActions } from 'vuex'
     export default {
         name: 'Dialog',
         mixins: [],
@@ -59,6 +59,7 @@
             document.removeEventListener('click', this.listenDocument)
         },
         methods: {
+            ...mapMutations(['addTodo']),
             ...mapActions(['createTodo']),
             initDate(n) {
                 let timeObj
@@ -93,11 +94,12 @@
                         this.content = ''
                         this.$emit('close-dialog')
                         this.initDate()
-                        console.log(res)
+                        let id = res.id
+                        let { content, done, time } = res.attributes
+                        this.addTodo({ id, content, done, time })
                     })
                     .catch(error => {
                         this.creating = false
-                        console.log(error)
                     })
             }
         }

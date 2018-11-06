@@ -26,26 +26,22 @@ const mutations = {
 const actions = {
     async check({ commit }) {
         let res = await request({ url: URL.check, method: 'GET' })
-        console.log(res)
         return res
     },
     async login({ commit }, data) {
         let res = await request({ url: URL.login, method: 'POST', data })
-        console.log(res)
         return res
     },
     async logout({ commit }) {
         let res = await request({ url: URL.logout, method: 'GET' })
-        console.log(res)
         return res
     },
     async patchUser({ commit }, data) {
         let res = await request({ url: URL.patchUser, method: 'PATCH', data })
-        console.log(res)
         return res
     },
-    async createTodoUser({commit},data){
-        let res=await TodoUser.create(data)
+    async createTodoUser({ commit }, data) {
+        let res = await TodoUser.create(data)
         return res
     }
 }
