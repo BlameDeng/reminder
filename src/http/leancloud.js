@@ -28,6 +28,13 @@ class Leancloud {
         return query.find()
     }
 
+    fetchByDependent(dependentClassName, dependentId) {
+        let dependentInstance = AV.Object.createWithoutData(dependentClassName, dependentId);
+        let query = new AV.Query(this.className);
+        query.equalTo('dependent', dependentInstance);
+        return query.find()
+    }
+
     update(data, id) {
         if (!data || !id) { return Promise.reject('必须提供data和id') }
         if (typeof data !== 'object') {

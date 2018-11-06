@@ -3,6 +3,9 @@
         <div class="add" @click="onClickAdd">
             <x-icon name="add" class="icon" :class="{rotate:dialogVisible}"></x-icon>
         </div>
+        <div class="content" style="height:2000px;">
+
+        </div>
         <transition name="dialog-show">
             <div class="dialog-wrapper" v-show="dialogVisible">
                 <x-dialog @close-dialog="dialogVisible=false"></x-dialog>
@@ -13,7 +16,7 @@
 <script>
     import xIcon from '@/components/icon/icon.vue'
     import xDialog from '@/components/dialog.vue'
-    import { mapMutations, mapActions } from 'vuex'
+    import { mapState, mapMutations, mapActions } from 'vuex'
     export default {
         name: 'xTodos',
         mixins: [],
@@ -22,7 +25,11 @@
         data() {
             return { value: '', dialogVisible: false }
         },
-        computed: {},
+        computed: {
+            ...mapState({
+                allTodos: state => state.todo.allTodos
+            })
+        },
         watch: {},
         created() {},
         mounted() {},
@@ -42,12 +49,14 @@
         width: 100%;
         height: 100%;
         position: relative;
+        overflow-x: hidden;
+        overflow-y: scroll;
         >.add {
             width: 70px;
             height: 70px;
-            position: absolute;
+            position: fixed;
             right: 20px;
-            bottom: 20px;
+            bottom: 80px;
             border-radius: 50%;
             display: flex;
             justify-content: center;
@@ -66,6 +75,27 @@
                 &.rotate {
                     transform: rotateZ(-45deg);
                 }
+            }
+        }
+        >.content {
+            background: #fff;
+            width: 100%;
+            height: 100%;
+        }
+        @media(min-width: 768px) {
+            >.content {
+                margin: 0 auto;
+                width: 580px;
+            }
+        }
+        @media(min-width: 1024px) {
+            >.content {
+                width: 800px;
+            }
+        }
+        @media(min-width: 1200px) {
+            >.content {
+                max-width: 1000px;
             }
         }
         >.dialog-wrapper {

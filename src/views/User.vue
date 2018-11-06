@@ -131,13 +131,24 @@
             }
         },
         created() {},
-        mounted() {},
+        mounted() {
+            this.fetchTodos(this.user.uid)
+                .then(todos => {
+                    let array = []
+                    todos.forEach(todo => {
+                        let { id, attributes } = todo
+                        let { content, done, time } = attributes
+                        array.push({ id, content, done, time })
+                    })
+                    this.setAllTodos(array)
+                })
+        },
         beforedestroy() {
             document.removeEventListener('click', this.listenDocument)
         },
         methods: {
-            ...mapMutations(['setUser', 'setLogin']),
-            ...mapActions(['logout', 'patchUser']),
+            ...mapMutations(['setUser', 'setLogin', 'setAllTodos']),
+            ...mapActions(['logout', 'patchUser', 'fetchTodos']),
             onClickMenu() {
                 this.siderVisible = !this.siderVisible
             },
@@ -375,7 +386,7 @@
             }
         }
         >.main {
-            flex-grow: 1;
+            width: 100%;
             height: 100%;
             display: flex;
             justify-content: flex-start;
