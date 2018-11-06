@@ -16,9 +16,7 @@
         },
         data() {
             return {
-                waveVisible: false,
-                width: 0,
-                height: 0
+                waveVisible: false
             }
         },
         computed: {

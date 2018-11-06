@@ -25,11 +25,12 @@
 </template>
 <script>
     import xIcon from '@/components/icon/icon.vue'
+    import xTextarea from '@/components/textarea.vue'
     import { mapState, mapActions } from 'vuex'
     export default {
         name: 'Dialog',
         mixins: [],
-        components: { xIcon },
+        components: { xIcon, xTextarea },
         props: {},
         data() {
             return {

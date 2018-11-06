@@ -16,9 +16,9 @@ export default function request({ url, method = 'GET', data }) {
                     reject(res.data)
                 }
             })
-            .catch(error => [
+            .catch(error => {
                 reject(error.response)
-            ])
+            })
     })
 }
 

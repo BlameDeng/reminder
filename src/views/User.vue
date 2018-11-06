@@ -307,6 +307,7 @@
                 border-bottom-right-radius: 4px;
                 cursor: pointer;
                 user-select: none;
+                background: rgb(245, 245, 245);
                 >li {
                     width: 100px;
                     padding: 4px 8px;
@@ -347,8 +348,8 @@
                     color: $sub;
                     cursor: pointer;
                     position: absolute;
-                    top: 4px;
-                    right: 4px;
+                    top: 6px;
+                    right: 6px;
                     &:hover {
                         color: $main;
                     }

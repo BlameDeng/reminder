@@ -29,9 +29,9 @@ class Leancloud {
     }
 
     fetchByDependent(dependentClassName, dependentId) {
-        let dependentInstance = AV.Object.createWithoutData(dependentClassName, dependentId);
-        let query = new AV.Query(this.className);
-        query.equalTo('dependent', dependentInstance);
+        let dependentInstance = AV.Object.createWithoutData(dependentClassName, dependentId)
+        let query = new AV.Query(this.className)
+        query.equalTo('dependent', dependentInstance)
         return query.find()
     }
 

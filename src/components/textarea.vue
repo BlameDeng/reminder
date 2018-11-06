@@ -1,21 +1,24 @@
 <template>
-    <div class="x-input" role="input">
-        <span class="label" v-if="placeholder" :class="{[`on-focus`]:onFocus||value}">{{placeholder}}</span>
-        <input type="text" :value="value" @focus="focus" @blur="blur" @change="$emit('change',$event)" @input="$emit('input',$event.target.value)">
+    <div class="x-textarea" role="textarea">
+        <textarea type="text" :value="value" @focus="focus" @blur="blur" @change="change" @input="$emit('input', $event.target.value)" ref="textarea"></textarea>
         <div class="line" :class="{active:onFocus}"></div>
     </div>
 </template>
 <script>
     export default {
-        name: 'xInput',
+        name: 'xTextarea',
         props: {
-            value: String,
-            placeholder: String
+            value: String
         },
         data() {
             return {
                 onFocus: false,
             }
+        },
+        mounted() {
+            this.$nextTick(() => {
+                this.handleHeight()
+            })
         },
         methods: {
             focus(e) {
@@ -25,44 +28,40 @@
             blur(e) {
                 this.$emit('blur', e)
                 this.onFocus = false
+            },
+            change(e) {
+                this.$emit('change', e)
+                this.handleHeight()
+            },
+            handleHeight() {
+                let height = this.$refs.textarea.scrollHeight
+                this.$el.style.height = height + 1 + 'px'
+                this.$refs.textarea.height = height + 'px'
             }
         }
     }
 </script>
 <style scoped lang="scss">
     @import '@/assets/color.scss';
-    .x-input {
+    .x-textarea {
         position: relative;
         width: 100%;
-        >input {
+        height: 25px;
+        display: flex;
+        justify-content: flex-start;
+        align-items: stretch;
+        >textarea {
             background: transparent;
             border: none;
-            border-bottom: $borderbase;
             width: 100%;
-            font-size: 16px;
-            line-height: 24px;
-            padding: 2px 0;
+            height: 100%;
+            font-size: 14px;
+            line-height: 22px;
             color: $main;
+            resize: none;
+            padding: 0 5px;
             &:focus {
                 outline: none;
-            }
-        }
-        >.label {
-            position: absolute;
-            color: $sub;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            transition: all .3s ease-in-out;
-            font-size: 16px;
-            line-height: 24px;
-            pointer-events: none;
-            user-select: none;
-            &.on-focus {
-                font-size: 12px;
-                line-height: 20px;
-                color: $p;
-                transform: translateY(-170%);
             }
         }
         >.line {
