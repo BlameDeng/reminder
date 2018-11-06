@@ -9,8 +9,6 @@
 <script>
     export default {
         name: 'xWave',
-        mixins: [],
-        components: {},
         props: {
             duration: { type: Number, default: 500 }
         },

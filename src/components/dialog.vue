@@ -29,9 +29,7 @@
     import { mapState, mapMutations, mapActions } from 'vuex'
     export default {
         name: 'Dialog',
-        mixins: [],
         components: { xIcon, xTextarea },
-        props: {},
         data() {
             return {
                 year: 0,
@@ -54,7 +52,6 @@
             }
         },
         created() { this.initDate() },
-        mounted() {},
         beforedestroy() {
             document.removeEventListener('click', this.listenDocument)
         },

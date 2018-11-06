@@ -7,13 +7,6 @@
     import { mapMutations, mapActions } from 'vuex'
     export default {
         name: 'App',
-        data() {
-            return {
-
-            }
-        },
-        computed: {},
-        watch: {},
         created() {
             this.check()
                 .then(res => {
@@ -21,12 +14,8 @@
                     this.setLogin(res.isLogin)
                     this.$router.push('/user')
                 })
-                .catch(error => {
-                    console.log(error)
-                })
+                .catch(error => {})
         },
-        mounted() {},
-        beforedestroy() {},
         methods: {
             ...mapMutations(['setUser', 'setLogin']),
             ...mapActions(['check'])

@@ -42,16 +42,10 @@
                 sentence: null,
             }
         },
-        computed: {},
-        watch: {},
         created() {
             let index = Math.floor(Math.random() * daily.length)
             this.sentence = daily[index]
         },
-        mounted() {
-
-        },
-        beforedestroy() {},
         methods: {
             ...mapMutations(['setUser', 'setLogin']),
             ...mapActions(['login', 'createTodoUser', 'patchUser']),
@@ -71,18 +65,15 @@
                             let id = res.data.id
                             this.createTodoUser({ username: res.data.username })
                                 .then(res => {
-                                    console.log(res)
                                     let { id: uid } = res
                                     return this.patchUser({ id, uid })
                                 })
                                 .then(res => {
-                                    console.log(res)
                                     this.setUser(res.data)
                                     this.setLogin(res.isLogin)
                                     this.$router.push('/user')
                                 })
                                 .catch(error => {
-                                    console.log(error)
                                 })
                         }
                     })

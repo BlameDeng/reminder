@@ -70,7 +70,6 @@
     import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
     export default {
         name: 'xTodos',
-        mixins: [],
         components: { xIcon, xDialog, xTextarea },
         props: { visibleType: { type: String, default: 'all' } },
         data() {
@@ -87,9 +86,6 @@
             }),
             ...mapGetters(['processingTodos', 'completedTodos', 'allDestTodos'])
         },
-        created() {},
-        mounted() {},
-        beforedestroy() {},
         methods: {
             ...mapMutations(['setUser', 'setLogin', 'updateTodo', 'filterTodo']),
             ...mapActions(['login', 'patchTodo', 'destroyTodo']),

@@ -145,7 +145,6 @@
                     document.removeEventListener('click', this.handleSider)
             }
         },
-        created() {},
         mounted() {
             this.fetchTodos(this.user.uid)
                 .then(todos => {
@@ -216,7 +215,6 @@
                         .catch(error => {
                             this.closeDialog()
                         })
-
                 } else if (this.changeType === 'nickyname') {
                     if (!this.input) {
                         this.info = '昵称不能为空哦~~'
