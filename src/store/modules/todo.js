@@ -9,8 +9,8 @@ const mutations = {}
 
 const actions = {
     async createTodo({ commit }, data) {
-        let { content, time } = data
-        let res = await Todo.create({ content, time }, 'TodoUser', data.uid)
+        let { content, time, done } = data
+        let res = await Todo.create({ content, time, done }, 'TodoUser', data.uid)
         console.log(res)
         return res
     }

@@ -5,12 +5,14 @@
         <div class="action">
             <div class="choice">
                 <div @click="onChoice">快速选择</div>
-                <div class="options" v-show="optionsVisible">
-                    <div @click="onOption(0)">今天 {{days[new Date().getDay()]}}</div>
-                    <div @click="onOption(1)">明天 {{days[(new Date().getDay()+1)%7]}}</div>
-                    <div @click="onOption(2)">后天 {{days[(new Date().getDay()+2)%7]}}</div>
-                    <div @click="onOption(3)">大后天 {{days[(new Date().getDay()+3)%7]}}</div>
-                </div>
+                <transition name=options-show>
+                    <div class="options" v-show="optionsVisible">
+                        <div @click="onOption(0)">今天 {{days[new Date().getDay()]}}</div>
+                        <div @click="onOption(1)">明天 {{days[(new Date().getDay()+1)%7]}}</div>
+                        <div @click="onOption(2)">后天 {{days[(new Date().getDay()+2)%7]}}</div>
+                        <div @click="onOption(3)">大后天 {{days[(new Date().getDay()+3)%7]}}</div>
+                    </div>
+                </transition>
             </div>
             <div class="datepicker">
                 <input type="text" v-model.trim="year">/
@@ -84,10 +86,11 @@
             onAddTodo() {
                 if (!this.content || this.creating) { return }
                 this.creating = true
-                this.createTodo({ content: this.content, time: `${this.year}-${this.fixed(this.month)}-${this.fixed(this.date)}`, uid: this.user.uid })
+                this.createTodo({ content: this.content, time: `${this.year}-${this.fixed(this.month)}-${this.fixed(this.date)}`, done: false, uid: this.user.uid })
                     .then(res => {
                         this.creating = false
-                        this.content=''
+                        this.content = ''
+                        this.$emit('close-dialog')
                         this.initDate()
                         console.log(res)
                     })
@@ -107,7 +110,7 @@
         position: relative;
         padding: 40px;
         padding-bottom: 50px;
-        color: #fff;
+        color: $main;
         border-radius: 4px;
         >.icon {
             position: absolute;
@@ -162,6 +165,9 @@
                             bottom: 100%;
                             width: 100%;
                             padding: 0;
+                            background: #fff;
+                            box-shadow: 2px 2px 8px rgba(0, 0, 0, .15);
+                            border-radius: 4px;
                             >div {
                                 width: 100%;
                                 font-size: 12px;
@@ -170,6 +176,14 @@
                                 transition: all .2s ease-in-out;
                                 &:hover {
                                     background: rgba(0, 0, 0, .09);
+                                }
+                                &:first-child {
+                                    border-top-left-radius: 4px;
+                                    border-top-right-radius: 4px;
+                                }
+                                &:last-child {
+                                    border-bottom-left-radius: 4px;
+                                    border-bottom-right-radius: 4px;
                                 }
                             }
                         }
@@ -186,7 +200,7 @@
                         box-shadow: none;
                         background: none;
                         cursor: default;
-                        color: #fff;
+                        color: $main;
                         font-size: 16px;
                         &:focus {
                             outline: none;
@@ -198,18 +212,12 @@
                 }
                 &.add {
                     line-height: 40px;
-                    color: $main;
-                }
-                @media (min-width: 768px) {
-                    &.add {
-                        color: rgba(255, 255, 255, .85);
-                    }
                 }
             }
         }
     }
     .options-show-enter-active, .options-show-leave-active {
-        transition: opacity .2s ease-in-out;
+        transition: opacity .3s ease-in-out;
     }
     .options-show-enter, .options-show-leave-to {
         opacity: 0;

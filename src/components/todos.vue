@@ -75,7 +75,7 @@
             width: 100%;
             height: 50%;
             box-shadow: 2px 2px 8px rgba(0, 0, 0, .15);
-            background: linear-gradient(to right, $p, #fff);
+            background: linear-gradient(to right, $p5, #fff);
         }
         @media (min-width: 768px) {
             >.dialog-wrapper {
@@ -84,7 +84,7 @@
                 width: 400px;
                 height: 300px;
                 border-radius: 4px;
-                background: $p5;
+                background: $p4;
             }
         }
         @media (min-width: 1200px) {

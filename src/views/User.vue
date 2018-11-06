@@ -174,22 +174,26 @@
                     if (!this.input) {
                         this.info = '密码不能为空哦~~'
                         return
-                    } else {
-                        this.patching = true
-                        this.patchUser({
-                                id: this.user.id,
-                                username: this.user.username,
-                                password: this.input
-                            })
-                            .then(res => {
-                                this.setUser(res.data)
-                                this.closeDialog()
-                            })
-                            .catch(error => {
-                                this.closeDialog()
-                            })
                     }
+                    this.patching = true
+                    this.patchUser({
+                            id: this.user.id,
+                            username: this.user.username,
+                            password: this.input
+                        })
+                        .then(res => {
+                            this.setUser(res.data)
+                            this.closeDialog()
+                        })
+                        .catch(error => {
+                            this.closeDialog()
+                        })
+
                 } else if (this.changeType === 'nickyname') {
+                    if (!this.input) {
+                        this.info = '昵称不能为空哦~~'
+                        return
+                    }
                     this.patching = true
                     this.patchUser({
                             id: this.user.id,
@@ -286,6 +290,7 @@
                 position: absolute;
                 top: 100%;
                 right: 30px;
+                z-index: 1;
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
                 border-bottom-left-radius: 4px;
                 border-bottom-right-radius: 4px;
@@ -311,6 +316,7 @@
             width: 100%;
             height: 100%;
             position: fixed;
+            z-index: 5;
             background: rgba(0, 0, 0, 0.04);
             >.dialog {
                 width: 300px;
