@@ -1,5 +1,7 @@
 <template>
     <div class="dialog">
+        <x-icon name="close" class="icon" @click="$emit('close-dialog')"></x-icon>
+        <textarea class="textarea" v-model.trim="content"></textarea>
         <div class="action">
             <div class="choice">
                 <div @click="onChoice">快速选择</div>
@@ -7,6 +9,7 @@
                     <div @click="onOption(0)">今天 {{days[new Date().getDay()]}}</div>
                     <div @click="onOption(1)">明天 {{days[(new Date().getDay()+1)%7]}}</div>
                     <div @click="onOption(2)">后天 {{days[(new Date().getDay()+2)%7]}}</div>
+                    <div @click="onOption(3)">大后天 {{days[(new Date().getDay()+3)%7]}}</div>
                 </div>
             </div>
             <div class="datepicker">
@@ -14,15 +17,17 @@
                 <input type="text" v-model.trim="month">/
                 <input type="text" v-model.trim="date">
             </div>
-            <div class="add">添加</div>
+            <div class="add" @click="onAddTodo">添加</div>
         </div>
     </div>
 </template>
 <script>
+    import xIcon from '@/components/icon/icon.vue'
+    import { mapState, mapActions } from 'vuex'
     export default {
         name: 'Dialog',
         mixins: [],
-        components: {},
+        components: { xIcon },
         props: {},
         data() {
             return {
@@ -31,9 +36,15 @@
                 date: 0,
                 optionsVisible: false,
                 days: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
+                content: '',
+                creating: false
             }
         },
-        computed: {},
+        computed: {
+            ...mapState({
+                user: state => state.auth.user
+            })
+        },
         watch: {
             optionsVisible(val) {
                 val ? document.addEventListener('click', this.listenDocument) : document.removeEventListener('click', this.listenDocument)
@@ -45,6 +56,7 @@
             document.removeEventListener('click', this.listenDocument)
         },
         methods: {
+            ...mapActions(['createTodo']),
             initDate(n) {
                 let timeObj
                 if (n) {
@@ -65,6 +77,24 @@
             onOption(n) {
                 let now = Date.now()
                 n ? this.initDate(now + 1000 * 60 * 60 * 24 * n) : this.initDate()
+            },
+            fixed(n) {
+                return n = n > 9 ? n : `0${n}`
+            },
+            onAddTodo() {
+                if (!this.content || this.creating) { return }
+                this.creating = true
+                this.createTodo({ content: this.content, time: `${this.year}-${this.fixed(this.month)}-${this.fixed(this.date)}`, uid: this.user.uid })
+                    .then(res => {
+                        this.creating = false
+                        this.content=''
+                        this.initDate()
+                        console.log(res)
+                    })
+                    .catch(error => {
+                        this.creating = false
+                        console.log(error)
+                    })
             }
         }
     }
@@ -75,9 +105,34 @@
         width: 100%;
         height: 100%;
         position: relative;
-        padding: 20px;
+        padding: 40px;
+        padding-bottom: 50px;
         color: #fff;
         border-radius: 4px;
+        >.icon {
+            position: absolute;
+            color: $sub;
+            top: 10px;
+            right: 10px;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+        }
+        @media (min-width: 768px) {
+            >.icon {
+                display: none;
+            }
+        }
+        >.textarea {
+            resize: none;
+            width: 100%;
+            height: 100%;
+            border-radius: 4px;
+            border: none;
+            outline: none;
+            padding: .5em;
+            color: $main;
+        }
         >.action {
             position: absolute;
             left: 0;
@@ -98,7 +153,7 @@
                     padding: 0;
                     >div {
                         font-size: 16px;
-                        padding: 0 25px;
+                        padding: 0 15px;
                         text-align: center;
                         line-height: 40px;
                         &.options {
@@ -109,8 +164,8 @@
                             padding: 0;
                             >div {
                                 width: 100%;
-                                font-size: 14px;
-                                line-height: 40px;
+                                font-size: 12px;
+                                line-height: 28px;
                                 background: transparent;
                                 transition: all .2s ease-in-out;
                                 &:hover {
@@ -143,6 +198,12 @@
                 }
                 &.add {
                     line-height: 40px;
+                    color: $main;
+                }
+                @media (min-width: 768px) {
+                    &.add {
+                        color: rgba(255, 255, 255, .85);
+                    }
                 }
             }
         }

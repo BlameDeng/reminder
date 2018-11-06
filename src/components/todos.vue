@@ -5,7 +5,7 @@
         </div>
         <transition name="dialog-show">
             <div class="dialog-wrapper" v-show="dialogVisible">
-                <x-dialog></x-dialog>
+                <x-dialog @close-dialog="dialogVisible=false"></x-dialog>
             </div>
         </transition>
     </div>
@@ -62,8 +62,8 @@
                 color: rgba(255, 255, 255, .85);
                 width: 30px;
                 height: 30px;
-                transition:  transform .2s linear;
-                &.rotate{
+                transition: transform .2s linear;
+                &.rotate {
                     transform: rotateZ(-45deg);
                 }
             }
@@ -73,23 +73,24 @@
             right: 0;
             bottom: 0;
             width: 100%;
-            height: 100%;
-            box-shadow: 2px 2px 8px rgba(0,0,0,.15);
-            background: $p5;
+            height: 50%;
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, .15);
+            background: linear-gradient(to right, $p, #fff);
         }
         @media (min-width: 768px) {
             >.dialog-wrapper {
                 right: 100px;
                 bottom: 20px;
                 width: 400px;
-                height: 500px;
+                height: 300px;
                 border-radius: 4px;
+                background: $p5;
             }
         }
         @media (min-width: 1200px) {
             >.dialog-wrapper {
                 width: 500px;
-                height: 500px;
+                height: 300px;
             }
         }
     }

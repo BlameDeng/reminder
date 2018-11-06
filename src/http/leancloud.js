@@ -13,7 +13,7 @@ class Leancloud {
         }
         let entries = Object.entries(data)
         let instance = new AV.Object(this.className)
-        if (dependentId && dependentClassName) {
+        if (dependentClassName && dependentId) {
             let dependentInstance = AV.Object.createWithoutData(dependentClassName, dependentId)
             instance.set('dependent', dependentInstance)
         }
