@@ -47,8 +47,8 @@
             this.sentence = daily[index]
         },
         methods: {
-            ...mapMutations(['setUser', 'setLogin']),
-            ...mapActions(['login', 'createTodoUser', 'patchUser']),
+            ...mapMutations(['setUser', 'setLogin', 'addTodo']),
+            ...mapActions(['login', 'createTodoUser', 'patchUser', 'createTodo']),
             onClick() {
                 if (!this.username || !this.password) {
                     this.info = '账号或密码不能为空哦~~'
@@ -72,14 +72,22 @@
                                     this.setUser(res.data)
                                     this.setLogin(res.isLogin)
                                     this.$router.push('/user')
+                                    let today = new Date()
+                                    this.createTodo({ content: '欢迎使用 Todos', time: `${today.getFullYear()}-${this.fixed(today.getMonth()+1)}-${this.fixed(today.getDate())}`, done: false, uid: res.data.uid }).then(res => {
+                                        let id = res.id
+                                        let { content, done, time } = res.attributes
+                                        this.addTodo({ id, content, done, time })
+                                    })
                                 })
-                                .catch(error => {
-                                })
+                                .catch(error => {})
                         }
                     })
                     .catch(error => {
                         this.info = error.msg
                     })
+            },
+            fixed(n) {
+                return n = n > 9 ? n : `0${n}`
             }
         }
     }

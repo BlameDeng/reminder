@@ -45,7 +45,7 @@
                     <ul>
                         <li style="color:#52c41a;" @click="onClickSider('introduction')">
                             <x-icon name="introduction" class="icon"></x-icon>
-                            <span class="info">项目介绍</span>
+                            <span class="info">关于 Todos</span>
                         </li>
                         <li style="color:#0366d6;" @click="onClickSider('link')">
                             <x-icon name="github" class="icon"></x-icon>
@@ -63,7 +63,7 @@
                     <h3 style="text-align:center;">项目介绍</h3>
                     <p><span>Todos</span> 是一款轻量级的在线待办 <span>SPA</span>。支持登录注册、增删改查、云端同步。</p>
                     <p><span>前端：Vue + Vuex + Vue Router + axios + CSS3</span></p>
-                    <p><span>部署：Node + Koa2 + Leancloud</span> 用户数据经加密后保存在服务器，支持 <span>token</span> 验证登录，<span>todo</span> 事项保存在 <span>leancloud</span></p>
+                    <p><span>部署：Node + Koa2 + Leancloud</span> 用户账号信息保存在服务器，支持 <span>token</span> 验证登录，<span>todos</span> 事项保存在 <span>leancloud</span></p>
                 </div>
             </div>
         </transition>
